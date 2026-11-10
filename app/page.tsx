@@ -31,7 +31,7 @@ import {
 } from 'lucide-react';
 
 // EXACT MUDI'S LOGO SVG COMPONENT
-const MudiLogo = ({ className = "h-12" }) => (
+const MudiLogo = ({ className = "h-12" }: { className?: string }) => (
   <div className={`flex items-center gap-2 ${className}`}>
     <svg viewBox="0 0 340 160" className="h-full w-auto" fill="none" xmlns="http://www.w3.org/2000/svg">
       {/* Chef Hat Outline & Swirl Lines in Dark Forest Green - Matched to Original Silhouette */}
@@ -79,7 +79,15 @@ const MudiLogo = ({ className = "h-12" }) => (
 );
 
 // OFFICIAL WEDDING PRICING DATA EXTRACTED FROM SCREENSHOTS
-const OFFICIAL_WEDDING_PRICING = [
+interface WeddingPricing {
+  pax: number;
+  tiers: number;
+  prepacks: number;
+  price: number;
+  weight: string;
+}
+
+const OFFICIAL_WEDDING_PRICING: WeddingPricing[] = [
   { pax: 50, tiers: 4, prepacks: 25, price: 31000, weight: "6 kgs" },
   { pax: 100, tiers: 5, prepacks: 50, price: 45000, weight: "10 kgs" },
   { pax: 200, tiers: 5, prepacks: 100, price: 65000, weight: "16 kgs" },
@@ -92,19 +100,19 @@ const OFFICIAL_WEDDING_PRICING = [
 ];
 
 export default function App() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [selectedGalleryCategory, setSelectedGalleryCategory] = useState('all');
-  const [activeFaq, setActiveFaq] = useState(0);
-  const [lightboxImage, setLightboxImage] = useState(null);
-  const [selectedWeddingPax, setSelectedWeddingPax] = useState(200);
-  const [weddingModalOpen, setWeddingModalOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
+  const [scrolled, setScrolled] = useState<boolean>(false);
+  const [selectedGalleryCategory, setSelectedGalleryCategory] = useState<string>('all');
+  const [activeFaq, setActiveFaq] = useState<number | null>(0);
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+  const [selectedWeddingPax, setSelectedWeddingPax] = useState<number>(200);
+  const [weddingModalOpen, setWeddingModalOpen] = useState<boolean>(false);
 
   // Customizer state
-  const [customTier, setCustomTier] = useState('2-Tier');
-  const [customPax, setCustomPax] = useState('100');
-  const [customFlavor, setCustomFlavor] = useState('Black Forest Velvet');
-  const [customAddons, setCustomAddons] = useState(['Sugar Flowers']);
+  const [customTier, setCustomTier] = useState<string>('2-Tier');
+  const [customPax, setCustomPax] = useState<string>('100');
+  const [customFlavor, setCustomFlavor] = useState<string>('Black Forest Velvet');
+  const [customAddons, setCustomAddons] = useState<string[]>(['Sugar Flowers']);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -114,7 +122,7 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const getWhatsAppUrl = (message) => {
+  const getWhatsAppUrl = (message?: string): string => {
     const defaultMsg = "Hello Mudi Cakes! I would like to inquire about ordering a custom cake.";
     return `https://wa.me/254721949214?text=${encodeURIComponent(message || defaultMsg)}`;
   };
@@ -253,7 +261,7 @@ export default function App() {
     return base;
   }, [customTier, customPax, customAddons]);
 
-  const toggleAddon = (item) => {
+  const toggleAddon = (item: string) => {
     if (customAddons.includes(item)) {
       setCustomAddons(customAddons.filter(i => i !== item));
     } else {
@@ -780,7 +788,7 @@ export default function App() {
       {lightboxImage && (
         <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4" onClick={() => setLightboxImage(null)}>
           <div className="relative max-w-4xl w-full">
-            <button className="absolute -top-12 right-0 text-white hover:text-gold">
+            <button className="absolute -top-12 right-0 text-white hover:text-gold" onClick={() => setLightboxImage(null)}>
               <X className="w-8 h-8" />
             </button>
             <img src={lightboxImage} alt="Enlarged Cake" className="w-full max-h-[85vh] object-contain rounded-3xl" />
@@ -936,9 +944,9 @@ export default function App() {
               </p>
 
               <form 
-                onSubmit={(e) => {
+                onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
                   e.preventDefault();
-                  const formData = new FormData(e.target);
+                  const formData = new FormData(e.currentTarget);
                   const msg = `Online Form Submission:
 - Name: ${formData.get('name')}
 - Phone: ${formData.get('phone')}
@@ -998,7 +1006,7 @@ export default function App() {
                   <label className="block font-bold text-chocolate mb-1">Cake Details / Flavor Preferences</label>
                   <textarea 
                     name="details" 
-                    rows="3" 
+                    rows={3}
                     placeholder="Describe flavor choice, guest numbers, design theme, or custom toppings..." 
                     className="w-full bg-cream/50 border border-gold/30 rounded-xl p-3 outline-none focus:border-gold"
                   ></textarea>
